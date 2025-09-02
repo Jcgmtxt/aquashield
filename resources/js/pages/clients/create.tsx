@@ -6,17 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface FormData {
     name: string;
+    identity_type: string;
     identity_number: string;
     phone_number: string;
     email: string;
 }
 
-export default function ViewCreateClient() {
+export default function create() {
     const { data, setData, post, processing, errors, reset } = useForm<FormData>({
         name: '',
+        identity_type: '',
         identity_number: '',
         phone_number: '',
         email: '',
@@ -59,6 +62,21 @@ export default function ViewCreateClient() {
                                     autoComplete="name"
                                 />
                                 <InputError message={errors.name} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="identity_type">Tipo de Identificación</Label>
+                                <Select value={data.identity_type} onValueChange={(value) => setData('identity_type', value)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona el tipo de identificación" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="CC">Cédula de Ciudadanía (CC)</SelectItem>
+                                        <SelectItem value="CE">Cédula de Extranjería (CE)</SelectItem>
+                                        <SelectItem value="NIT">NIT</SelectItem>
+                                        <SelectItem value="Passport">Pasaporte</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError message={errors.identity_type} />
                             </div>
 
                             <div className="grid gap-2">

@@ -15,8 +15,9 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::all();
-        return Inertia::render('Clients/viewAllClients', [
+        $clientsService = new ClientsService();
+        $clients = $clientsService->getClients();
+        return Inertia::render('clients/index', [
             'clients' => $clients,
         ]);
     }
@@ -26,7 +27,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Clients/viewCreateClient');
+        return Inertia::render('clients/create');
     }
 
     /**
@@ -46,7 +47,11 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $clientsService = new ClientsService();
+        $client = $clientsService->getClientById($id);
+        return Inertia::render('clients/show', [
+            'client' => $client,
+        ]);
     }
 
     /**
