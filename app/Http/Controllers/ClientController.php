@@ -10,71 +10,59 @@ use App\Services\ClientsService;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct(private ClientsService $clientsService){}
+
+    public function index() : Response
     {
-        $clientsService = new ClientsService();
-        $clients = $clientsService->getClients();
+        $clients = $this->clientsService->list();
         return Inertia::render('clients/index', [
             'clients' => $clients,
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create() : Response
     {
         return Inertia::render('clients/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreClientRequest $request)
     {
-        $clientsService = new ClientsService();
-        $client = $clientsService->createClient($request);
-        return to_route('clients.index', [
-            'client' => $client,
-        ]);
+        $client = $this->clients->create($request->validated());
+
+        return redirect()
+            ->route('clients.show', $client)
+            ->with('success', 'Cliente creado correctamente');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Client $client) : Response
     {
-        $clientsService = new ClientsService();
-        $client = $clientsService->getClientById($id);
         return Inertia::render('clients/show', [
             'client' => $client,
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(string $id) : Response
     {
-        //
+        return Inertia::render('clients/edit', [
+            'client' => $client,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(UpdateClientRequest $request, Client $client)
     {
-        //
+        $client = $this->clientsService->update($client, $request->validated());
+
+        return redirect()
+            ->route('clients.show', $client)
+            ->with('success', 'Cliente actualizado correctamente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Client $client)
     {
-        //
+        $this->clientsService->delete($client);
+
+        return redirect()
+            ->route('clients/index' -m)
+            ->with('success', 'Cliente eliminado correctamente');
     }
 }

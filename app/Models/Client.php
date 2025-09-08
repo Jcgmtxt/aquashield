@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\IdentityType;
 
 class Client extends Model
 {
@@ -21,8 +22,9 @@ class Client extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'identity_type' => IdentityType::class,
     ];
-
+ 
     /**
      * Relación con los vehículos del cliente
      */

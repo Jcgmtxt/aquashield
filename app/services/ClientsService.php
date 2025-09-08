@@ -4,53 +4,39 @@ namespace App\Services;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ClientsService
 {
-    public function getClients()
+    public function list(int $perPage = 15): LengthAwarePaginator
     {
-        return Client::all();
+        return Client::query()->latest('id')->paginate($perPage);
     }
 
-    public function getClientById(int $id)
+    public function find(int $id)
     {
-        if(!Client::find($id)){
-            throw new \Exception('Client not found');
-        }
-    
-        return Client::find($id);
+        return Client::findOrFail($id);
     }
 
-    public function createClient(Request $request){
-        $validate = $request->validate([
-            'name' => 'required|string|max:255',
-            'identity_type' => 'required|string|in:CC,CE,NIT,Passport',
-            'identity_number' => 'required|string|max:255|unique:clients',
-            'phone_number' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:clients',
-        ]);
-
-        $client = Client::create($validate);
-
-        return $client;
+    public function create(array $data){
+        return DB::transaction(function () use ($data) {
+            return Client::create($data);
+        });
     }
 
-    public function updateClient(Request $request, int $id)
+    public function update(Client $client, array $data): Client
     {
-        if(!Client::find($id)){
-            throw new \Exception('Client not found');
-        }
+        return DB::transaction(function () use ($client, $data) {
+            $client->update($data);
+            return $client->refresh();
+        });
+    }
 
-        $validate = $request->validate([
-            'name' => 'required|string|max:255',
-            'identity_number' => 'required|string|max:255|unique:clients',
-            'phone_number' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:clients',
-        ]);
-
-        Client::find($id)->update($validate);
-
-        return Client::find($id);
+    public function delete(Client $client)
+    {
+        return DB::transaction(function () use ($client) {
+            $client->delete();
+        });
     }
 
     public function verifyMail(string $mail): bool
