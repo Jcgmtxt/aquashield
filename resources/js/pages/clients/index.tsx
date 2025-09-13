@@ -3,12 +3,17 @@ import { Head, Link } from "@inertiajs/react";
 export interface Client {
     id: number;
     name: string;
+    identity_type: string;
     identity_number: string;
     phone_number: string;
     email: string;
 }
 
-export default function index({ clients }: { clients: Client[] }) {
+interface IndexProps {
+    clients: Client[];
+}
+
+export default function index({ clients }: IndexProps) {
     return (
         <>
             <Head title="Todos los Clientes" />
@@ -23,13 +28,28 @@ export default function index({ clients }: { clients: Client[] }) {
                     </Link>
                 </div>
                 <div className="grid gap-4">
-                    {clients.length > 0 ? (
+                    {clients && clients.length > 0 ? (
                         clients.map((client: Client) => (
                             <div key={client.id} className="border rounded-lg p-4 shadow-sm">
                                 <h3 className="font-semibold">{client.name}</h3>
-                                <p>ID: {client.identity_number}</p>
+                                <p>Tipo documento: {client.identity_type}</p>
+                                <p>Número documento: {client.identity_number}</p>
                                 <p>Teléfono: {client.phone_number}</p>
                                 <p>Email: {client.email}</p>
+                                <div className="mt-2">
+                                    <Link 
+                                        href={`/clients/${client.id}`}
+                                        className="text-blue-600 hover:text-blue-800 mr-4"
+                                    >
+                                        Ver
+                                    </Link>
+                                    <Link 
+                                        href={`/clients/${client.id}/edit`}
+                                        className="text-green-600 hover:text-green-800"
+                                    >
+                                        Editar
+                                    </Link>
+                                </div>
                             </div>
                         ))
                     ) : (

@@ -7,6 +7,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Client;
 use App\Services\ClientsService;
+use App\Http\Requests\Client\StoreClientRequest;
+use App\Http\Requests\Client\UpdateClientRequest;
 
 class ClientController extends Controller
 {
@@ -27,7 +29,7 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request)
     {
-        $client = $this->clients->create($request->validated());
+        $client = $this->clientsService->create($request->validated());
 
         return redirect()
             ->route('clients.show', $client)
@@ -41,7 +43,7 @@ class ClientController extends Controller
         ]);
     }
 
-    public function edit(string $id) : Response
+    public function edit(Client $client) : Response
     {
         return Inertia::render('clients/edit', [
             'client' => $client,
@@ -62,7 +64,7 @@ class ClientController extends Controller
         $this->clientsService->delete($client);
 
         return redirect()
-            ->route('clients/index' -m)
+            ->route('clients.index')
             ->with('success', 'Cliente eliminado correctamente');
     }
 }

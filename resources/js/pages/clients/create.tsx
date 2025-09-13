@@ -27,6 +27,13 @@ export default function create() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Validar que se haya seleccionado un tipo de identificación
+        if (!data.identity_type) {
+            alert('Por favor selecciona un tipo de identificación');
+            return;
+        }
+        
         post('/clients', {
             onSuccess: () => {
                 reset();
@@ -65,7 +72,11 @@ export default function create() {
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="identity_type">Tipo de Identificación</Label>
-                                <Select value={data.identity_type} onValueChange={(value) => setData('identity_type', value)}>
+                                <Select 
+                                    value={data.identity_type} 
+                                    onValueChange={(value) => setData('identity_type', value)}
+                                    required
+                                >
                                     <SelectTrigger>
                                         <SelectValue placeholder="Selecciona el tipo de identificación" />
                                     </SelectTrigger>

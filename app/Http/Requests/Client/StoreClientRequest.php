@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Client;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Enums\IdentityType;
 
 class StoreClientRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StoreClientRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +25,7 @@ class StoreClientRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:100'],
-            'identity_type' => ['required', Rule::enum(IdentityType::class)],
+            'identity_type' => ['required', 'string', Rule::in(['CC', 'CE', 'NIT', 'Passport'])],
             'identity_number' => ['required', 'string', 'max:100', Rule::unique('clients', 'identity_number')],
             'phone_number' => ['required', 'string', 'max:10', Rule::unique('clients', 'phone_number')],
             'email' => ['required', 'string', 'email', 'max:100', Rule::unique('clients', 'email')],

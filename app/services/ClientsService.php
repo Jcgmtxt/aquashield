@@ -4,13 +4,15 @@ namespace App\Services;
 
 use App\Models\Client;
 use Illuminate\Http\Request;
+use App\Http\Requests\Client\StoreClientRequest;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class ClientsService
 {
-    public function list(int $perPage = 15): LengthAwarePaginator
+    public function list()
     {
-        return Client::query()->latest('id')->paginate($perPage);
+        return Client::query()->latest('id')->get();
     }
 
     public function find(int $id)
@@ -19,9 +21,7 @@ class ClientsService
     }
 
     public function create(array $data){
-        return DB::transaction(function () use ($data) {
-            return Client::create($data);
-        });
+        return Client::create($data);
     }
 
     public function update(Client $client, array $data): Client
@@ -34,9 +34,7 @@ class ClientsService
 
     public function delete(Client $client)
     {
-        return DB::transaction(function () use ($client) {
-            $client->delete();
-        });
+        return $client->delete();
     }
 
     public function verifyMail(string $mail): bool
@@ -46,6 +44,11 @@ class ClientsService
         }
 
         return false;
+    }
+
+    public function store(StoreClientRequest $request): Client
+    {
+        return Client::create($request->validated());
     }
 
 }
