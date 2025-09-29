@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronDown, ChevronUp, Search, MoreHorizontal } from "lucide-react"
+import { ChevronUp, Search, MoreHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "./button"
 import { Input } from "./input"
@@ -18,11 +18,21 @@ export interface TableColumn<T = any> {
   className?: string
 }
 
-export interface TableAction<T = any> {
+export interface TableButton {
+  label: string
+  icon?: React.ReactNode
+  onClick: () => void // Para botones del header
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+  className?: string
+  disabled?: boolean
+}
+
+export interface TableRowButton<T = any> {
   key: string
   label: string
   icon?: React.ReactNode
-  onClick: (record: T) => void
+  onClick: (record: T) => void // Para botones de fila
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
   className?: string
 }
@@ -30,7 +40,7 @@ export interface TableAction<T = any> {
 export interface TableProps<T = any> {
   data: T[]
   columns: TableColumn<T>[]
-  actions?: TableAction<T>[]
+  actions?: TableRowButton<T>[]
   loading?: boolean
   searchable?: boolean
   searchPlaceholder?: string
@@ -40,6 +50,7 @@ export interface TableProps<T = any> {
   selectable?: boolean
   selectedRows?: T[]
   onSelectionChange?: (selectedRows: T[]) => void
+  buttons?: TableButton[]
   pagination?: {
     current: number
     pageSize: number
@@ -66,6 +77,7 @@ function Table<T = any>({
   selectable = false,
   selectedRows = [],
   onSelectionChange,
+  buttons = [],
   pagination,
   emptyText = "No hay datos disponibles",
   className,
@@ -118,10 +130,15 @@ function Table<T = any>({
     return selectedRows.some(row => (row as any).id === (record as any).id)
   }
 
+  const allButtons = React.useMemo(() => {
+    const buttonList = [...buttons]
+    return buttonList
+  }, [buttons])
+
   return (
     <Card className={cn("w-full", className)}>
       {/* Header con búsqueda */}
-      {(searchable || actions.length > 0) && (
+      {(searchable || allButtons.length > 0) && (
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-4">
             {searchable && (
@@ -135,18 +152,20 @@ function Table<T = any>({
                 />
               </div>
             )}
-            {actions.length > 0 && (
-              <div className="flex gap-2">
-                {actions.map((action) => (
+            {/* Botones */}
+            {allButtons.length > 0 && (
+              <div className="flex items-center gap-2">
+                {allButtons.map((btn, index) => (
                   <Button
-                    key={action.key}
-                    variant={action.variant || 'outline'}
-                    size="sm"
-                    onClick={() => action.onClick(data[0])} // Esto se puede mejorar
-                    className={action.className}
+                    key={index}
+                    variant={btn.variant || 'outline'}
+                    size={btn.size || 'sm'}
+                    onClick={btn.onClick}
+                    disabled={btn.disabled}
+                    className={btn.className}
                   >
-                    {action.icon}
-                    {action.label}
+                    {btn.icon && <span className="mr-2">{btn.icon}</span>}
+                    {btn.label}
                   </Button>
                 ))}
               </div>
@@ -195,15 +214,7 @@ function Table<T = any>({
                                 ? 'text-foreground'
                                 : 'text-muted-foreground'
                             )}
-                          />
-                          <ChevronDown
-                            className={cn(
-                              "h-3 w-3 -mt-1",
-                              sortColumn === column.key && sortDirection === 'desc'
-                                ? 'text-foreground'
-                                : 'text-muted-foreground'
-                            )}
-                          />
+                          />                          
                         </div>
                       )}
                     </div>

@@ -6,7 +6,7 @@ import { dashboard } from '@/routes';
 import clients from '@/routes/clients';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Users } from 'lucide-react';
+import { LayoutGrid, UserRoundPlus, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -16,10 +16,10 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Clients',
+        title: 'Clientes',
         href: clients.index(),
         icon: Users,
-    }
+    },
 ];
 
 export function AppSidebar() {

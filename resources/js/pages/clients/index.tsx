@@ -37,12 +37,10 @@ export default function index({ clients }: IndexProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Clientes" />
             <div className="container mx-auto py-6">
                 <ClientsTable
                     clients={clients}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
                     onView={handleView}
                     onCreate={handleCreate}
                 />

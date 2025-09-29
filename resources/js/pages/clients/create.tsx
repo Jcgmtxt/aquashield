@@ -1,12 +1,14 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
-
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import AppLayout from '@/layouts/app-layout';
+import clients from '@/routes/clients';
+import { BreadcrumbItem } from '@/types';
 
 interface FormData {
     name: string;
@@ -40,11 +42,20 @@ export default function create() {
             },
         });
     };
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Clientes',
+            href: clients.index().url,
+        },
+        {
+            title: 'Crear Cliente',
+            href: clients.create().url,
+        },
+    ];
 
     return (
-        <>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Crear Cliente" />
-            
             <div className="container mx-auto py-6">
                 <Card className="max-w-2xl mx-auto">
                     <CardHeader>
@@ -150,6 +161,6 @@ export default function create() {
                     </CardContent>
                 </Card>
             </div>
-        </>
+        </AppLayout>
     );
 }
