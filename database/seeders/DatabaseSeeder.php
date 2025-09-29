@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('P4ssw0rd')
         ]);
 
-        // Crear clientes de prueba
         Client::create([
             'name' => 'Juan Pérez',
             'identity_type' => 'CC',
